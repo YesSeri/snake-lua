@@ -1,0 +1,1 @@
+To run on my windows computer use `..\LOVE.lnk C:\Programming\lua\game`
