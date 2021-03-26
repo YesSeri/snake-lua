@@ -1,14 +1,16 @@
 require "Part"
-require "Queue"
 Snake = {}
 Snake.__index = Snake
 
 function Snake:new()
     local s = {}
     setmetatable(s, Snake)
+    s:push(Part:new(1, 5))
+    s:push(Part:new(2, 5))
     s:push(Part:new(3, 5))
     s:push(Part:new(4, 5))
     s:push(Part:new(5, 5))
+    s:push(Part:new(6, 5))
     return s
 end
 function Snake:move(direction)
@@ -24,7 +26,6 @@ function Snake:move(direction)
     elseif direction == 'right' then
         self:push(Part:new(x + 1, y))
     end
-    self:pop()
 end
 function Snake:push(part)
     table.insert(self, part)
@@ -34,8 +35,22 @@ function Snake:pop()
     return table.remove(self, 1)
 end
 
-function Snake:getHead()
-    return self[#self]
+function Snake:isCrashing()
+    head = self:getHead()
+
+    print('head', head)
+    local crashTest = function (h, p)
+        if h.x == p.x and h.y == p.y then
+            return true
+        end
+        return false
+    end
+    for i = 1, #self-1 do
+        if crashTest(head, self[i]) == true then
+            return true
+        end
+    end
+    return false
 end
 
 function Snake:draw(square_size)
@@ -43,6 +58,11 @@ function Snake:draw(square_size)
         love.graphics.rectangle("fill", part['x'] * square_size, part['y'] * square_size, square_size, square_size, 5, 5)
     end
 end
+
+function Snake:getHead()
+    return self[#self]
+end
+
 function Snake:__tostring()
     local s = "snake: { "
     for i,part in ipairs(self) do
