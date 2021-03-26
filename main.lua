@@ -10,17 +10,33 @@ end
 
 function love.update(dt)
 	timer = timer + dt
+	local function queue_move(dir)
+		mq = move_queue[#move_queue]
+		if #move_queue < 2 then
+			if (dir == "right" or dir == 'left') and (mq == 'right' or mq == 'left') then
+				return
+			elseif (dir == "up" or dir == 'down') and (mq == 'up' or mq == 'down') then
+				return
+			end
+			table.insert(move_queue, dir)
+		end
+	end
+
     if love.keyboard.isDown('up') then
-		direction = 'up'
+		queue_move('up')
     elseif love.keyboard.isDown('down') then
-		direction = 'down'
+		queue_move('down')
 	elseif love.keyboard.isDown('right') then
-		direction = 'right'
+		queue_move('right')
     elseif love.keyboard.isDown('left') then
-		direction = 'left'
+		queue_move('left')
     end
-	if timer > 1.5 then
+	if timer > 0.5 then
 		timer = 0
+		if move_queue[1] ~= nil then 
+			direction = move_queue[1]
+			table.remove(move_queue, 1)
+		end
 		snake:move(direction)
 	end
 end
@@ -36,15 +52,7 @@ local function game_over()
 end
 
 function love.draw()
-
 	local square_size = 30
-	function grid_x(grid_x)
-		return grid_x*square_size
-	end
-	function grid_y(grid_y)
-		return grid_y*square_size
-	end
-
 	if game_over() then
 		love.graphics.print( 'Gameover', grid_x(13), grid_y(10))
 	end
