@@ -1,25 +1,15 @@
-test = {'a', 'b', 'c', {'d', 'e'}}
+move_queue = {}
 
-local function printNestedTables(table)
-    for i,elem in ipairs(table) do
-        if (type(elem) == "table") then
-            printNestedTables(elem)
-        else
-            print(elem)
-        end
+local function queue_move(dir)
+    if dir ~= move_queue[#move_queue] and #move_queue < 2 then
+        table.insert(move_queue, dir)
     end
 end
-function recToString(table, idx)
-    local i = idx or 1
-    if i > #table then 
-        return ""
-    elseif type(table[i]) == 'string' then
-        return table[i] .. ", ".. recToString(table, i + 1)
-    elseif type(table[i]) == 'table' then
-        return recToString(table[i])
-    end
 
+queue_move('right')
+queue_move('left')
+queue_move('right')
+queue_move('left')
+for i,el in ipairs(move_queue) do
+    print(i, el)
 end
-
-s = recToString(2)
-print(s)

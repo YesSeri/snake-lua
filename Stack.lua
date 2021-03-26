@@ -16,6 +16,5 @@ end
 
 a = s.pop()
 while(a) do
-    print(a)
     a = s.pop()
 end

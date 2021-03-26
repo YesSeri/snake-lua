@@ -1,30 +1,15 @@
-require("snake")
+require "Snake"
 function love.load()
-	snake = Snake:new(4, 4)
-	snake.print()
+	snake = Snake:new()
 	grid_size = 25
 	game_over = false
 	direction = 'right'
+	move_queue = {}
 	timer = 0.6
 end
 
 function love.update(dt)
 	timer = timer + dt
-	if timer > 0.5 then
-		timer = 0
-		local x = snake:getX()
-		local y = snake:getY()
-		snake:print()
-		if direction == 'up' then
-			snake.move(x, y - 1)
-		elseif direction == 'down' then
-			snake.move(x, y + 1)
-		elseif direction == 'left' then
-			snake.move(x - 1, y)
-		elseif direction == 'right' then
-			snake.move(x + 1, y)
-		end
-	end
     if love.keyboard.isDown('up') then
 		direction = 'up'
     elseif love.keyboard.isDown('down') then
@@ -34,13 +19,20 @@ function love.update(dt)
     elseif love.keyboard.isDown('left') then
 		direction = 'left'
     end
-	function game_over()
-		-- if(x < 0 or x > 25 or y < 0 or y > 25) then
-		-- 	return true
-		-- else
-			return false
-		-- end
+	if timer > 1.5 then
+		timer = 0
+		snake:move(direction)
 	end
+end
+
+local function game_over()
+	local head = snake:getHead()
+	local x = head.x
+	local y = head.y
+	if(x < 0 or x > 25 or y < 0 or y > 25) then
+		return true
+	end
+	return false
 end
 
 function love.draw()
@@ -58,5 +50,5 @@ function love.draw()
 	end
 	love.graphics.setBackgroundColor( 0.1, 0.1, 0.1)
 	love.graphics.setColor( 0.15, 0.7, 0.15)
-	Snake:draw(square_size)
+	snake:draw(square_size)
 end

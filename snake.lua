@@ -1,37 +1,53 @@
+require "Part"
+require "Queue"
 Snake = {}
+Snake.__index = Snake
 
-function PartNew(x, y)
-    local Part = {}
-    Part['x'] = x
-    Part['y'] = y
-    return Part
+function Snake:new()
+    local s = {}
+    setmetatable(s, Snake)
+    s:push(Part:new(3, 5))
+    s:push(Part:new(4, 5))
+    s:push(Part:new(5, 5))
+    return s
+end
+function Snake:move(direction)
+    local head = self:getHead()
+    local x = head.x
+    local y = head.y
+    if direction == 'up' then
+        self:push(Part:new(x, y - 1))
+    elseif direction == 'down' then
+        self:push(Part:new(x, y + 1))
+    elseif direction == 'left' then
+        self:push(Part:new(x - 1, y))
+    elseif direction == 'right' then
+        self:push(Part:new(x + 1, y))
+    end
+    self:pop()
+end
+function Snake:push(part)
+    table.insert(self, part)
 end
 
-function Snake:new(x, y)
-    Snake[1] = PartNew(5,5)
-    Snake[2] = PartNew(4,5)
-    Snake[3] = PartNew(3,5)
-    return Snake
+function Snake:pop()
+    return table.remove(self, 1)
 end
-function Snake:move(x, y)
-    table.insert(snake, PartNew(12, 12))
-    table.remove(snake)
-end
-function Snake:getX()
-    return snake[1]['x']
-end
-function Snake:getY()
-    return snake[1]['y']
+
+function Snake:getHead()
+    return self[#self]
 end
 
 function Snake:draw(square_size)
-    for i, part in ipairs(Snake) do
+    for i, part in ipairs(self) do
         love.graphics.rectangle("fill", part['x'] * square_size, part['y'] * square_size, square_size, square_size, 5, 5)
     end
 end
-function Snake:print()
-    for i,part in ipairs(Snake) do
-        io.write("snake:{ ", "x: ", part["x"], " y: ", part["y"], " }, ")
+function Snake:__tostring()
+    local s = "snake: { "
+    for i,part in ipairs(self) do
+        s = s .. tostring(part)
     end
-    print()
+    s = s .. " } \n"
+    return s
 end
