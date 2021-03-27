@@ -38,7 +38,6 @@ end
 function Snake:isCrashing()
     head = self:getHead()
 
-    print('head', head)
     local crashTest = function (h, p)
         if h.x == p.x and h.y == p.y then
             return true
